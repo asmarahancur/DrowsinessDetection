@@ -1,11 +1,12 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Drowsiness Detection Web App</title>
+  <title>Drowsiness Detection | AI-Powered Driver Monitoring</title>
   <link rel="stylesheet" href="styles.css" />
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- MediaPipe FaceMesh JS -->
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
@@ -13,34 +14,178 @@
 </head>
 <body>
   <div class="container">
-    <h1 class="app-title">Drowsiness Detection Web App</h1>
-    <p class="app-subtitle">Real-time EAR-based drowsiness detection (client-side)</p>
+    <!-- Header dengan tema dan kontrol kamera -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="logo">
+          <i class="fas fa-eye"></i>
+          <h1 class="app-title">Drowsiness Detection</h1>
+        </div>
+        <p class="app-subtitle">AI-powered real-time driver fatigue monitoring</p>
+      </div>
+      <div class="header-right">
+        <div class="theme-toggle">
+          <span class="theme-label"><i class="fas fa-moon"></i> Tema</span>
+          <label class="switch">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </header>
 
-    <div class="controls">
-      <button id="btnStart" class="btn primary">Start Camera</button>
-      <button id="btnStop" class="btn" disabled>Stop Camera</button>
+    <!-- Kontrol utama aplikasi -->
+    <div class="controls-section">
+      <div class="controls-grid">
+        <button id="btnStart" class="btn primary">
+          <i class="fas fa-play-circle"></i> Start Camera
+        </button>
+        <button id="btnStop" class="btn secondary" disabled>
+          <i class="fas fa-stop-circle"></i> Stop Camera
+        </button>
+        <button id="btnSwitchCamera" class="btn tertiary" disabled>
+          <i class="fas fa-sync-alt"></i> Switch Camera <span id="cameraLabel">(Rear)</span>
+        </button>
+        <button id="btnTestAlarm" class="btn warning">
+          <i class="fas fa-volume-up"></i> Test Alarm
+        </button>
+      </div>
     </div>
 
-    <div class="grid">
+    <!-- Konten utama aplikasi -->
+    <div class="main-grid">
+      <!-- Panel video dengan overlay stats -->
       <div class="panel video-panel card">
+        <div class="panel-header">
+          <h3><i class="fas fa-video"></i> Camera Feed</h3>
+          <div class="camera-status">
+            <span id="cameraStatus" class="status-indicator idle">Idle</span>
+          </div>
+        </div>
         <div class="video-wrapper">
           <video id="video" playsinline class="video" style="display:none"></video>
           <canvas id="canvas" class="canvas"></canvas>
+          <div class="video-overlay">
+            <div class="overlay-stats">
+              <div class="stat-item">
+                <span class="stat-label">Face Detected</span>
+                <span id="faceDetected" class="stat-value">No</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Camera</span>
+                <span id="cameraType" class="stat-value">-</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">FPS</span>
+                <span id="fpsCounter" class="stat-value">0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="video-controls">
+          <button id="btnMirror" class="btn small">
+            <i class="fas fa-exchange-alt"></i> Mirror Off
+          </button>
+          <div class="video-info">
+            <i class="fas fa-info-circle"></i> Detection active
+          </div>
         </div>
       </div>
+
+      <!-- Panel status dan metrik -->
       <div class="panel status-panel card">
-        <div id="statusBadge" class="status-badge badge-green">STATUS: NORMAL</div>
-        <div class="metric">
-          <div class="metric-label">EAR</div>
-          <div id="earValue" class="metric-value">-</div>
+        <div class="panel-header">
+          <h3><i class="fas fa-chart-line"></i> Detection Metrics</h3>
         </div>
-        <div class="params">
-          <div>EAR threshold: <strong id="thVal">0.18</strong></div>
-          <div>Consecutive frames for drowsy: <strong id="cfVal">30</strong></div>
+        
+        <div class="status-container">
+          <div id="statusBadge" class="status-badge badge-green">
+            <i class="fas fa-check-circle"></i> STATUS: NORMAL
+          </div>
+          
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-icon">
+                <i class="fas fa-eye"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-label">EAR (Eye Aspect Ratio)</div>
+                <div id="earValue" class="metric-value">-</div>
+                <div class="metric-progress">
+                  <div class="progress-bar">
+                    <div id="earProgress" class="progress-fill"></div>
+                  </div>
+                  <div class="progress-label">Threshold: <strong id="thVal">0.18</strong></div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="metric-card">
+              <div class="metric-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="metric-content">
+                <div class="metric-label">Drowsy Frame Count</div>
+                <div id="drowsyCounter" class="metric-value">0</div>
+                <div class="metric-progress">
+                  <div class="progress-bar">
+                    <div id="drowsyProgress" class="progress-fill warning"></div>
+                  </div>
+                  <div class="progress-label">Threshold: <strong id="cfVal">30</strong> frames</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="params-card">
+            <h4><i class="fas fa-sliders-h"></i> Detection Parameters</h4>
+            <div class="params-grid">
+              <div class="param-item">
+                <label for="earThreshold">EAR Threshold</label>
+                <input type="range" id="earThreshold" min="0.1" max="0.3" step="0.01" value="0.18">
+                <span id="earThresholdValue">0.18</span>
+              </div>
+              <div class="param-item">
+                <label for="frameThreshold">Drowsy Frame Threshold</label>
+                <input type="range" id="frameThreshold" min="10" max="60" step="1" value="30">
+                <span id="frameThresholdValue">30</span>
+              </div>
+              <div class="param-item">
+                <label for="alarmVolume">Alarm Volume</label>
+                <input type="range" id="alarmVolume" min="0" max="100" step="1" value="50">
+                <span id="alarmVolumeValue">50%</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="alarm-status">
+            <h4><i class="fas fa-bell"></i> Alarm Status</h4>
+            <div class="alarm-info">
+              <div class="alarm-indicator" id="alarmIndicator">
+                <div class="indicator-dot"></div>
+                <span>Alarm Inactive</span>
+              </div>
+              <button id="btnSilence" class="btn small" disabled>
+                <i class="fas fa-volume-mute"></i> Silence Alarm
+              </button>
+            </div>
+          </div>
+          
+          <div class="note">
+            <i class="fas fa-exclamation-triangle"></i>
+            <p>If audio doesn't play on first alert, click anywhere on the page to allow audio permissions. Ensure proper lighting for accurate detection.</p>
+          </div>
         </div>
-        <div class="note">Jika audio tidak berbunyi pertama kali, klik halaman sekali untuk mengizinkan audio.</div>
       </div>
     </div>
+    
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p><i class="fas fa-shield-alt"></i> <strong>Privacy First:</strong> All processing happens locally in your browser. No data is sent to any server.</p>
+        <p class="footer-copyright">Drowsiness Detection System v2.0 | Built with MediaPipe FaceMesh</p>
+      </div>
+    </footer>
   </div>
 
   <script src="app.js"></script>

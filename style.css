@@ -1,0 +1,41 @@
+* { box-sizing: border-box; }
+:root {
+  --bg: #f7f8fb;
+  --card-bg: #ffffff;
+  --text: #0f172a;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #2563EB;
+  --accent-strong: #1D4ED8;
+  --ok: #059669;
+  --ok-soft: #10B98122;
+  --warn: #B91C1C;
+  --warn-soft: #EF444422;
+  --shadow: 0 8px 28px rgba(2, 6, 23, 0.08);
+}
+body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; background:var(--bg); color:var(--text); }
+.container { max-width: 1200px; margin: 28px auto; padding: 0 18px; }
+.app-title { text-align: center; font-size: 2.1rem; font-weight: 800; margin: 0.2rem 0; letter-spacing: -0.01em; }
+.app-subtitle { text-align:center; color:var(--muted); margin: 0 0 18px 0; }
+.controls { display:flex; gap:12px; justify-content:center; margin: 18px 0 22px; }
+.btn { padding: 10px 16px; border-radius: 12px; border:1px solid var(--border); background: #fff; cursor:pointer; font-weight:600; color: var(--text); transition: all .15s ease; }
+.btn:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn:disabled { opacity: .55; cursor:not-allowed; box-shadow:none; transform:none; }
+.btn.primary { background: var(--accent); border-color: var(--accent-strong); color: #fff; }
+.grid { display:grid; grid-template-columns: 1.5fr 1fr; gap: 18px; align-items: start; }
+.card { background:var(--card-bg); border:1px solid var(--border); border-radius:18px; padding:18px; box-shadow: var(--shadow); }
+.video-wrapper { position: relative; width: 100%; background:#0b0b0b; border-radius: 14px; overflow:hidden; border:1px solid #0b0b0b; }
+.video { width: 100%; height: auto; display:block; }
+.canvas { width: 100%; height: auto; display:block; }
+.status-badge { font-weight:800; font-size:1.4rem; padding:0.5rem 0.9rem; border-radius:12px; text-align:center; margin: 14px 0; border:1px solid transparent; }
+.badge-green { background:var(--ok-soft); color:var(--ok); border-color:#34D399; }
+.badge-red { background:var(--warn-soft); color:var(--warn); border-color:#F87171; }
+.metric { display:flex; align-items:baseline; gap:10px; margin-bottom: 8px; }
+.metric-label { font-size:0.9rem; color:var(--muted); }
+.metric-value { font-size:1.5rem; font-weight:800; letter-spacing: -0.01em; }
+.params { color:#374151; font-size: 0.95rem; }
+.note { color:var(--muted); font-size: 0.9rem; margin-top: 8px; }
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+}

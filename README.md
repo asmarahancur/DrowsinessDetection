@@ -9,7 +9,7 @@
 
 **AI-powered real-time driver fatigue monitoring system that runs entirely in your browser**
 
-[![Screenshot](https://via.placeholder.com/800x450/3b82f6/ffffff?text=Drowsiness+Detection+Preview)]()
+[![Screenshot](ScreenshotWeb.png)]()
 
 </div>
 

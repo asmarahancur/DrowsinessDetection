@@ -1,0 +1,48 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drowsiness Detection Web App</title>
+  <link rel="stylesheet" href="static/css/styles.css" />
+  <!-- MediaPipe FaceMesh JS -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1 class="app-title">Drowsiness Detection Web App</h1>
+    <p class="app-subtitle">Real-time EAR-based drowsiness detection (client-side)</p>
+
+    <div class="controls">
+      <button id="btnStart" class="btn primary">Start Camera</button>
+      <button id="btnStop" class="btn" disabled>Stop Camera</button>
+    </div>
+
+    <div class="grid">
+      <div class="panel video-panel card">
+        <div class="video-wrapper">
+          <video id="video" playsinline class="video" style="display:none"></video>
+          <canvas id="canvas" class="canvas"></canvas>
+        </div>
+      </div>
+      <div class="panel status-panel card">
+        <div id="statusBadge" class="status-badge badge-green">STATUS: NORMAL</div>
+        <div class="metric">
+          <div class="metric-label">EAR</div>
+          <div id="earValue" class="metric-value">-</div>
+        </div>
+        <div class="params">
+          <div>EAR threshold: <strong id="thVal">0.18</strong></div>
+          <div>Consecutive frames for drowsy: <strong id="cfVal">30</strong></div>
+        </div>
+        <div class="note">Jika audio tidak berbunyi pertama kali, klik halaman sekali untuk mengizinkan audio.</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="static/js/app.js"></script>
+</body>
+</html>
